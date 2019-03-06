@@ -1,1 +1,1 @@
-# S:open-hands:WERVE Arduino Core
+# S:open_hands:WERVE Arduino Core
