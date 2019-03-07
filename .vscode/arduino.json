@@ -1,6 +1,6 @@
 {
     "sketch": "swerve.ino",
     "board": "arduino:sam:arduino_due_x_dbg",
-    "port": "/dev/cu.usbmodem1411201",
+    "port": "/dev/cu.usbmodem1411301",
     "programmer": "AVRISP mkII"
 }

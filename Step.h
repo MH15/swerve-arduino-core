@@ -11,8 +11,9 @@
 class Step
 {
 public:
-  Step(int stepPin, int dirPin);
-  void rotate(int degrees, int dir);
+  Step(int test);
+  void pin(int stepPin, int dirPin);
+  void rotate(int deg, int dir);
 
 private:
   int _stepPin;
