@@ -11,6 +11,7 @@ const int victor_pin = 5;
 Step stepper(8);
 BigMotor motor(9);
 
+// before
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
