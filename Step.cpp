@@ -7,13 +7,9 @@
 #include "Arduino.h"
 #include "Step.h"
 
-#define STEPS_PER_REV 200
-
 Step::Step(int test)
 {
   int test2 = test + 1;
-  angle = 0;
-  position = 0;
 }
 
 /**
@@ -39,7 +35,7 @@ void Step::pin(int stepPin, int dirPin)
 void Step::rotate(int deg, int dir)
 {
 
-  int pulses = (deg / (float)360) * STEPS_PER_REV;
+  int pulses = (deg / (float)360) * stepsPerRev;
 
   digitalWrite(_dirPin, dir);
   // Makes 200 pulses for making one full cycle rotation
@@ -52,20 +48,23 @@ void Step::rotate(int deg, int dir)
   }
 }
 
+/**
+ * Run the stepper to angleToApproach then hold
+ */
 void Step::run()
 {
-  while (abs(angle - position) > 0)
+  while (abs(angleToApproach - currentAngle) > 0)
   {
     int dir;
-    if (angle > position)
+    if (angleToApproach > currentAngle)
     {
       dir = HIGH;
-      position++;
+      currentAngle++;
     }
     else
     {
       dir = LOW;
-      position--;
+      currentAngle--;
     }
 
     // set direction
@@ -77,8 +76,25 @@ void Step::run()
     delayMicroseconds(500);
   }
 }
-
+/**
+ * Set the angleToApproach that the motor shoudl gradually attain
+ * @param {int} deg: angle in degrees [0, 360*n)
+ */
 void Step::setAngle(int deg)
 {
-  angle = deg;
+  angleToApproach = deg;
+}
+
+/**
+ * Set how many steps it takes to  make one full revolution of the stepper. By
+ * default, stepsPerRev is 200, but gearing or belts are used on the stepper
+ * there may be a need for changing how many steps belong in a full revolution.
+ * @param {int} steps: the number of steps per full revolution
+ */
+void Step::setStepsPerRev(int steps)
+{
+  if (steps > 0)
+  {
+    stepsPerRev = steps;
+  }
 }

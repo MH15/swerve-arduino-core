@@ -94,6 +94,7 @@ void setup()
    while (HC06.available())
       HC06.read(); // empty RX buffer
 
+   motor.pin(victor_pin);
    stepper.pin(stepPin, dirPin);
    stepper.rotate(360, HIGH);
 }
@@ -124,6 +125,7 @@ void loop()
       }
    }
    stepper.run();
+   motor.run();
    sendBlueToothData();
 }
 
@@ -199,9 +201,10 @@ void getJoystickState(byte data[8])
    // Serial.println(joyY);
 
    int joyRot = (int)((atan2(joyX, joyY) * 4068) / 71);
-   // int joyMag = (int)sqrt(joyX * joyX + joyY * joyY);
+   int joyMag = (int)sqrt(joyX * joyX + joyY * joyY);
+   motor.setSpeed(joyMag);
    stepper.setAngle(joyRot);
-   Serial.println("Joystick angle: " + (String)stepper.angle);
+   Serial.println("Joystick angle: " + (String)stepper.angleToApproach + ", magnitude: " + motor.speedToApproach);
 }
 
 void getButtonState(int bStatus)

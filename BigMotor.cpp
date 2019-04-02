@@ -26,20 +26,19 @@ int pos = 0;
 
 BigMotor::BigMotor(int t)
 {
-//  Serial.print("loaded motor");
-//  Servo _motor;
-//  _motor.attach(pin);
-//  _motor.write(98);
+  //  Serial.print("loaded motor");
+  //  Servo _motor;
+  //  _motor.attach(pin);
+  //  _motor.write(98);
   int _speed = 0;
 }
 
-
-void BigMotor::pin(int pin){
+void BigMotor::pin(int pin)
+{
   Serial.println("attaching motor");
   _motor.attach(pin);
-//  _motor.write(98);
+  //  _motor.write(98);
 }
-
 
 /**
  * Rotate the motor at given speed and direction instantly
@@ -79,8 +78,8 @@ void BigMotor::rotate(int speed)
     range = stop_signal - min_signal;
     pwm_signal = stop_signal - percent * range;
   }
-//  Serial.print("speed: " + (String)speed);
-//  Serial.println("; pwm: " + (String)pwm_signal);
+  //  Serial.print("speed: " + (String)speed);
+  //  Serial.println("; pwm: " + (String)pwm_signal);
   _motor.write(pwm_signal);
 }
 
@@ -107,4 +106,63 @@ void BigMotor::LinearAccel(int speed, int duration_ms)
   // store the new speed
   _speed = speed;
   Serial.println("done accel");
+}
+
+/**
+ * Set the speed that the motor should gradually attain
+ * @param {int} speed: the speed to accelerate to
+ * Only sets the speedToApproach if speed is in range(SPEED_MIN_MAX)
+ */
+void BigMotor::setSpeed(int speed)
+{
+  if (speed >= SPEED_MIN_MAX[0] && speed <= SPEED_MIN_MAX[1])
+  {
+    speedToApproach = speed;
+  }
+}
+
+/**
+ * Run the motor to speedToApproach then remain steady, increasing the speed
+ * each call by acceleration, if the speedToApproach has not yet been met.
+ */
+void BigMotor::run()
+{
+  while (abs(speedToApproach - currentSpeed) > 0)
+  {
+    int dir;
+    if (speedToApproach > currentSpeed)
+    {
+      currentSpeed += acceleration;
+      // avoid backlash
+      if (speedToApproach < currentSpeed)
+      {
+        currentSpeed = speedToApproach;
+      }
+    }
+    else if (speedToApproach < currentSpeed)
+    {
+      currentSpeed -= acceleration;
+      // avoid backlash
+      if (speedToApproach > currentSpeed)
+      {
+        currentSpeed = speedToApproach;
+      }
+    }
+    rotate(currentSpeed)
+  }
+}
+
+/**
+ * Set the acceleration that the motor should use on its way to speedToApproach.
+ * Each step will never increase by more than accel, but it could be less if for
+ * example the current speed is 79 approaching 80 and accel is set at 4, the
+ * final step will be a change of 1, not of 4 velocity units.
+ * @param {int} accel: the rate of increase in motor RPM
+ */
+void BigMotor::setAcceleration(int accel)
+{
+  if (accel >= ACCEL_MIN_MAX[0] && accel <= ACCEL_MIN_MAX[1])
+  {
+    acceleration = accel;
+  }
 }
