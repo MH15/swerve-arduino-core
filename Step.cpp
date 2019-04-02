@@ -12,6 +12,8 @@
 Step::Step(int test)
 {
   int test2 = test + 1;
+  angle = 0;
+  position = 0;
 }
 
 /**
@@ -48,4 +50,35 @@ void Step::rotate(int deg, int dir)
     digitalWrite(_stepPin, LOW);
     delayMicroseconds(500);
   }
+}
+
+void Step::run()
+{
+  while (abs(angle - position) > 0)
+  {
+    int dir;
+    if (angle > position)
+    {
+      dir = HIGH;
+      position++;
+    }
+    else
+    {
+      dir = LOW;
+      position--;
+    }
+
+    // set direction
+    digitalWrite(_dirPin, dir);
+
+    digitalWrite(_stepPin, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(_stepPin, LOW);
+    delayMicroseconds(500);
+  }
+}
+
+void Step::setAngle(int deg)
+{
+  angle = deg;
 }

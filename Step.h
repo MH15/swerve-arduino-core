@@ -14,10 +14,14 @@ public:
   Step(int test);
   void pin(int stepPin, int dirPin);
   void rotate(int deg, int dir);
+  void setAngle(int deg);
+  void run();
+  int angle;
 
 private:
   int _stepPin;
   int _dirPin;
+  int position;
 };
 
 #endif
